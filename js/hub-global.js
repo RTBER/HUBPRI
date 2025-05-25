@@ -22,29 +22,40 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
-    // Función para determinar la ruta base del sitio (para GitHub Pages o servidor local)
     function getSiteBasePath() {
-        // AJUSTA 'sekainovels-hub' al nombre EXACTO de tu repositorio GitHub si es diferente.
-        const repoName = 'sekainovels-hub'; 
+        // ¡¡¡IMPORTANTE!!! 
+        // CAMBIA 'HUBPRI' AL NOMBRE EXACTO DE TU REPOSITORIO EN GITHUB SI ES DIFERENTE.
+        // Debe coincidir con la parte de la URL: tu-usuario.github.io/NOMBRE_DEL_REPOSITORIO/
+        const repoName = 'HUBPRI'; // <--- ¡¡¡AJUSTA ESTO!!!
         const hostname = window.location.hostname;
         const pathname = window.location.pathname;
-
+        let basePath = "";
+    
         if (hostname.endsWith('github.io')) {
-            const pathSegments = pathname.split('/').filter(segment => segment);
+            // Para GitHub Pages, el path suele ser /repoName/ o /repoName/index.html, etc.
+            const pathSegments = pathname.split('/').filter(segment => segment.length > 0);
             if (pathSegments.length > 0 && pathSegments[0].toLowerCase() === repoName.toLowerCase()) {
-                return `/${pathSegments[0]}`; // ej. /sekainovels-hub
-            } else {
-                return ''; 
+                basePath = `/${pathSegments[0]}`; // ej. /HUBPRI
             }
-        } else { // Servidor Local
-            const pathSegments = pathname.split('/').filter(segment => segment);
+            // Si es un sitio de usuario/organización (usuario.github.io sin nombre de repo en path)
+            // y tu repoName no es el primer segmento (lo cual no debería pasar si configuras repoName arriba),
+            // basePath permanecerá como "".
+        } else { 
+            // Para servidor Local:
+            // Si la URL local incluye el nombre del repo como primer segmento
+            // (ej. http://localhost:xxxx/HUBPRI/index.html)
+            const pathSegments = pathname.split('/').filter(segment => segment.length > 0);
             if (pathSegments.length > 0 && pathSegments[0].toLowerCase() === repoName.toLowerCase()) {
-                 return `/${pathSegments[0]}`;
+                 basePath = `/${pathSegments[0]}`;
             }
-            return ''; 
+            // Si el servidor local sirve directamente la carpeta del repo como raíz
+            // (ej. http://localhost:xxxx/index.html), entonces basePath permanece "".
         }
+        console.log(`SekaiHub: SITE_BASE_PATH deducido: "${basePath}" (Hostname: ${hostname}, Pathname: ${pathname})`);
+        return basePath;
     }
-    const SITE_BASE_PATH = getSiteBasePath();
+    const SITE_BASE_PATH = getSiteBasePath(); // Asegúrate que esto se llame DESPUÉS de definir la función
+    
     console.log(`SekaiHub: SITE_BASE_PATH deducido: "${SITE_BASE_PATH}"`);
 
 
