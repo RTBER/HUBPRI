@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function getSiteBasePath() {
     // ¡¡¡ASEGÚRATE DE QUE ESTE VALOR SEA EL NOMBRE EXACTO DE TU REPOSITORIO EN GITHUB!!!
-    const repoName = 'sitio-principal-nuevo'; // <--- VERIFICA Y CAMBIA ESTO SI ES NECESARIO
+    const repoName = 'SITIO-PRINCIPAL-NUEVO'; // <--- VERIFICA Y CAMBIA ESTO SI ES NECESARIO
     const hostname = window.location.hostname;
     const pathname = window.location.pathname;
     let basePath = "";
