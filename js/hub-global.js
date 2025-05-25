@@ -102,8 +102,8 @@ console.log(`SekaiHub: SITE_BASE_PATH final deducido: "${SITE_BASE_PATH}"`); // 
     async function loadLayoutAndInitialize() {
         console.log("SekaiHub: Cargando layout (header y footer)...");
         await Promise.all([
-            loadComponent('_header.html', 'header-placeholder'),
-            loadComponent('_footer.html', 'footer-placeholder')
+            loadComponent('component_header.html', 'header-placeholder'), // <-- CAMBIADO
+            loadComponent('component_footer.html', 'footer-placeholder')  // <-- CAMBIADO
         ]);
         await new Promise(resolve => setTimeout(resolve, 0)); 
         initializeHubFunctionality();
