@@ -22,42 +22,47 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
-    function getSiteBasePath() {
-        // ¡¡¡IMPORTANTE!!! 
-        // CAMBIA 'HUBPRI' AL NOMBRE EXACTO DE TU REPOSITORIO EN GITHUB SI ES DIFERENTE.
-        // Debe coincidir con la parte de la URL: tu-usuario.github.io/NOMBRE_DEL_REPOSITORIO/
-        const repoName = 'HUBPRI'; // <--- ¡¡¡AJUSTA ESTO!!!
-        const hostname = window.location.hostname;
-        const pathname = window.location.pathname;
-        let basePath = "";
-    
-        if (hostname.endsWith('github.io')) {
-            // Para GitHub Pages, el path suele ser /repoName/ o /repoName/index.html, etc.
-            const pathSegments = pathname.split('/').filter(segment => segment.length > 0);
-            if (pathSegments.length > 0 && pathSegments[0].toLowerCase() === repoName.toLowerCase()) {
-                basePath = `/${pathSegments[0]}`; // ej. /HUBPRI
-            }
-            // Si es un sitio de usuario/organización (usuario.github.io sin nombre de repo en path)
-            // y tu repoName no es el primer segmento (lo cual no debería pasar si configuras repoName arriba),
-            // basePath permanecerá como "".
-        } else { 
-            // Para servidor Local:
-            // Si la URL local incluye el nombre del repo como primer segmento
-            // (ej. http://localhost:xxxx/HUBPRI/index.html)
-            const pathSegments = pathname.split('/').filter(segment => segment.length > 0);
-            if (pathSegments.length > 0 && pathSegments[0].toLowerCase() === repoName.toLowerCase()) {
-                 basePath = `/${pathSegments[0]}`;
-            }
-            // Si el servidor local sirve directamente la carpeta del repo como raíz
-            // (ej. http://localhost:xxxx/index.html), entonces basePath permanece "".
-        }
-        console.log(`SekaiHub: SITE_BASE_PATH deducido: "${basePath}" (Hostname: ${hostname}, Pathname: ${pathname})`);
-        return basePath;
-    }
-    const SITE_BASE_PATH = getSiteBasePath(); // Asegúrate que esto se llame DESPUÉS de definir la función
-    
-    console.log(`SekaiHub: SITE_BASE_PATH deducido: "${SITE_BASE_PATH}"`);
+// DENTRO de js/hub-global.js
 
+function getSiteBasePath() {
+    // ¡¡¡ASEGÚRATE DE QUE ESTE VALOR SEA EL NOMBRE EXACTO DE TU REPOSITORIO EN GITHUB!!!
+    const repoName = 'HUBPRI'; // <--- VERIFICA Y CAMBIA ESTO SI ES NECESARIO
+    const hostname = window.location.hostname;
+    const pathname = window.location.pathname;
+    let basePath = "";
+
+    console.log(`[getSiteBasePath] Original Pathname: ${pathname}`);
+
+    if (hostname.endsWith('github.io')) {
+        // Para GitHub Pages, el path suele ser /repoName/ o /repoName/index.html, etc.
+        // Filtramos para quitar segmentos vacíos que pueden surgir de barras iniciales/finales
+        const pathSegments = pathname.split('/').filter(segment => segment.length > 0);
+        console.log(`[getSiteBasePath] Path Segments:`, pathSegments);
+        console.log(`[getSiteBasePath] Comparando con repoName.toLowerCase(): ${repoName.toLowerCase()}`);
+
+        if (pathSegments.length > 0 && pathSegments[0].toLowerCase() === repoName.toLowerCase()) {
+            basePath = `/${pathSegments[0]}`; 
+            console.log(`[getSiteBasePath] GitHub Pages: repoName encontrado, basePath es: ${basePath}`);
+        } else {
+            console.log(`[getSiteBasePath] GitHub Pages: repoName NO encontrado como primer segmento o pathSegments vacío. basePath sigue siendo: "${basePath}"`);
+            // Esto podría suceder si el sitio es un sitio de usuario (rtber.github.io) y el repoName no es parte del path
+            // O si el repoName está mal escrito.
+        }
+    } else { 
+        // Servidor Local
+        const pathSegments = pathname.split('/').filter(segment => segment.length > 0);
+        console.log(`[getSiteBasePath] Local Server Path Segments:`, pathSegments);
+        if (pathSegments.length > 0 && pathSegments[0].toLowerCase() === repoName.toLowerCase()) {
+             basePath = `/${pathSegments[0]}`; // Si la URL local incluye el nombre del repo
+             console.log(`[getSiteBasePath] Local Server: repoName encontrado, basePath es: ${basePath}`);
+        } else {
+            console.log(`[getSiteBasePath] Local Server: repoName NO encontrado o servido desde raíz. basePath sigue siendo: "${basePath}"`);
+        }
+    }
+    return basePath;
+}
+const SITE_BASE_PATH = getSiteBasePath(); // Esto debe estar después de la definición de la función
+console.log(`SekaiHub: SITE_BASE_PATH final deducido: "${SITE_BASE_PATH}"`); // Log final
 
     async function loadComponent(componentFile, placeholderId) {
         // Los componentes siempre están en la raíz del proyecto del hub.
