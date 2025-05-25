@@ -1,0 +1,339 @@
+// js/hub-global.js
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("SekaiHub: DOMContentLoaded. Iniciando script v4 (rutas de componentes mejoradas).");
+
+    // --- Datos de Novelas para el Buscador ---
+    // Asegúrate que las rutas en 'presentationPage' sean relativas a la RAÍZ de tu proyecto 'sekainovels-hub'
+    const novelsData = [
+        { 
+            title: "Ore wa Seikan Kokka no Akutoku Ryōshu!", 
+            author: "Yomu Mishima",
+            presentationPage: "novelas/Ore wa Seikan Kokka no Akutoku Ryōshu!.html", // Ruta desde la raíz del hub
+        },
+        { 
+            title: "Overlord", 
+            author: "Kugane Maruyama",
+            presentationPage: "novelas/Overlord.html", // Ruta desde la raíz del hub
+        },
+        { 
+            title: "Kage no Jitsuryokusha ni Naritakute!", 
+            author: "Aizawa Daisuke",
+            presentationPage: "novelas/Kage no Jitsuryokusha ni Naritakute!.html", // Ruta desde la raíz del hub
+        }
+    ];
+
+    // Función para determinar la ruta base del sitio (para GitHub Pages o servidor local)
+    function getSiteBasePath() {
+        // AJUSTA 'sekainovels-hub' al nombre EXACTO de tu repositorio GitHub si es diferente.
+        const repoName = 'sekainovels-hub'; 
+        const hostname = window.location.hostname;
+        const pathname = window.location.pathname;
+
+        if (hostname.endsWith('github.io')) {
+            const pathSegments = pathname.split('/').filter(segment => segment);
+            if (pathSegments.length > 0 && pathSegments[0].toLowerCase() === repoName.toLowerCase()) {
+                return `/${pathSegments[0]}`; // ej. /sekainovels-hub
+            } else {
+                return ''; 
+            }
+        } else { // Servidor Local
+            const pathSegments = pathname.split('/').filter(segment => segment);
+            if (pathSegments.length > 0 && pathSegments[0].toLowerCase() === repoName.toLowerCase()) {
+                 return `/${pathSegments[0]}`;
+            }
+            return ''; 
+        }
+    }
+    const SITE_BASE_PATH = getSiteBasePath();
+    console.log(`SekaiHub: SITE_BASE_PATH deducido: "${SITE_BASE_PATH}"`);
+
+
+    async function loadComponent(componentFile, placeholderId) {
+        // Los componentes siempre están en la raíz del proyecto del hub.
+        const fetchUrl = `${SITE_BASE_PATH}/${componentFile}`; 
+
+        console.log(`SekaiHub: [loadComponent] Página actual: ${window.location.pathname}`);
+        console.log(`SekaiHub: [loadComponent] Intentando fetch de: ${fetchUrl} para placeholder: ${placeholderId}`);
+
+        try {
+            const response = await fetch(fetchUrl);
+            const responseStatus = response.status;
+            const responseOk = response.ok;
+            const fullAttemptedUrl = new URL(fetchUrl, window.location.origin).href; 
+
+            console.log(`SekaiHub: [loadComponent] Fetch para ${componentFile} (URL intentada: ${fullAttemptedUrl}) - Status: ${responseStatus}, OK: ${responseOk}`);
+
+            if (!responseOk) {
+                throw new Error(`No se pudo cargar ${componentFile} desde ${fullAttemptedUrl} (Status: ${responseStatus})`);
+            }
+            const html = await response.text();
+            const placeholder = document.getElementById(placeholderId);
+            if (placeholder) {
+                placeholder.outerHTML = html; 
+                console.log(`SekaiHub: [loadComponent] Componente '${placeholderId}' cargado DESDE ${fullAttemptedUrl}`);
+            } else {
+                console.warn(`SekaiHub: [loadComponent] Placeholder '${placeholderId}' NO ENCONTRADO.`);
+            }
+        } catch (error) {
+            console.error(`SekaiHub: [loadComponent] Catch - Error cargando componente '${componentFile}':`, error);
+            const placeholder = document.getElementById(placeholderId);
+            if (placeholder) {
+                placeholder.innerHTML = `<div class="component-error-message" style="color:red; text-align:center; padding:1em; border:1px dashed red; background: #fff0f0;">Error al cargar sección: ${componentFile}.<br>Verifique consola (F12) y ruta: ${fetchUrl}</div>`;
+            }
+        }
+    }
+
+    async function loadLayoutAndInitialize() {
+        console.log("SekaiHub: Cargando layout (header y footer)...");
+        await Promise.all([
+            loadComponent('_header.html', 'header-placeholder'),
+            loadComponent('_footer.html', 'footer-placeholder')
+        ]);
+        await new Promise(resolve => setTimeout(resolve, 0)); 
+        initializeHubFunctionality();
+    }
+
+    function initializeHubFunctionality() {
+        console.log("SekaiHub: initializeHubFunctionality() - Iniciando.");
+
+        const currentYearSpan = document.getElementById('currentYear');
+        if (currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
+
+        const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
+        const mobileNavMenuEl = document.getElementById('mobileNavMenuEl'); 
+        const iconMenu = mobileNavToggle ? mobileNavToggle.querySelector('.icon-menu') : null;
+        const iconClose = mobileNavToggle ? mobileNavToggle.querySelector('.icon-close') : null;
+        const novelasDropdownToggleMobile = document.getElementById('novelasDropdownToggleMobile');
+        const novelasDropdownMenuMobile = document.getElementById('novelasDropdownMenuMobile');
+
+        if (mobileNavToggle && mobileNavMenuEl && iconMenu && iconClose) {
+            if(iconMenu) iconMenu.style.display = 'block'; 
+            if(iconClose) iconClose.style.display = 'none';  
+            mobileNavToggle.addEventListener('click', () => {
+                const isExpanded = mobileNavMenuEl.classList.toggle('active');
+                mobileNavToggle.setAttribute('aria-expanded', isExpanded.toString());
+                mobileNavToggle.classList.toggle('active'); 
+                if (iconMenu) iconMenu.style.display = isExpanded ? 'none' : 'block';
+                if (iconClose) iconClose.style.display = isExpanded ? 'block' : 'none';
+                if (!isExpanded) {
+                    if (novelasDropdownMenuMobile) novelasDropdownMenuMobile.classList.remove('submenu-active');
+                    if (novelasDropdownToggleMobile) {
+                        novelasDropdownToggleMobile.setAttribute('aria-expanded', 'false');
+                        const arrow = novelasDropdownToggleMobile.querySelector('.dropdown-arrow-mobile');
+                        if (arrow) arrow.style.transform = 'rotate(0deg)';
+                    }
+                }
+            });
+        }
+
+        if (novelasDropdownToggleMobile && novelasDropdownMenuMobile) {
+            novelasDropdownToggleMobile.addEventListener('click', (e) => {
+                e.preventDefault(); 
+                const isSubmenuExpanded = novelasDropdownMenuMobile.classList.toggle('submenu-active');
+                novelasDropdownToggleMobile.setAttribute('aria-expanded', isSubmenuExpanded.toString());
+                const arrow = novelasDropdownToggleMobile.querySelector('.dropdown-arrow-mobile');
+                if(arrow) arrow.style.transform = isSubmenuExpanded ? 'rotate(180deg)' : 'rotate(0deg)';
+            });
+        }
+        
+        if (mobileNavMenuEl) {
+            mobileNavMenuEl.querySelectorAll('a:not(.has-dropdown-mobile), .dropdown-menu-mobile a').forEach(link => {
+                link.addEventListener('click', () => { 
+                    if (mobileNavMenuEl.classList.contains('active')) {
+                        mobileNavMenuEl.classList.remove('active');
+                        if(mobileNavToggle) {
+                            mobileNavToggle.setAttribute('aria-expanded', 'false');
+                            mobileNavToggle.classList.remove('active');
+                        }
+                        if (iconMenu && iconClose) {
+                           iconMenu.style.display = 'block';
+                           iconClose.style.display = 'none';
+                        }
+                        if (novelasDropdownMenuMobile) novelasDropdownMenuMobile.classList.remove('submenu-active');
+                        if (novelasDropdownToggleMobile) {
+                            novelasDropdownToggleMobile.setAttribute('aria-expanded', 'false');
+                            const arrow = novelasDropdownToggleMobile.querySelector('.dropdown-arrow-mobile');
+                            if(arrow) arrow.style.transform = 'rotate(0deg)';
+                        }
+                    }
+                });
+            });
+            const mobileThemeBtn = mobileNavMenuEl.querySelector('.theme-toggle-btn');
+            if(mobileThemeBtn){ 
+                mobileThemeBtn.addEventListener('click', (e)=>{
+                    e.stopPropagation(); 
+                });
+            }
+        }
+        
+        const hubThemeToggleBtns = [
+            document.getElementById('hubThemeToggleBtnDesktop'),
+            document.getElementById('hubThemeToggleBtnMobile')
+        ].filter(btn => btn !== null); 
+        const LSHubThemeKey = 'sekainovels-hub-theme';
+
+        const applyHubTheme = (theme) => { 
+            document.documentElement.setAttribute('data-theme', theme);
+            hubThemeToggleBtns.forEach(btn => {
+                const iconSun = btn.querySelector('.icon-sun');
+                const iconMoon = btn.querySelector('.icon-moon');
+                if (iconSun && iconMoon) {
+                    iconSun.style.display = theme === 'dark' ? 'inline-block' : 'none';
+                    iconMoon.style.display = theme === 'light' ? 'inline-block' : 'none';
+                    btn.title = theme === 'light' ? 'Activar Tema Oscuro' : 'Activar Tema Claro';
+                }
+            });
+        };
+        const toggleHubTheme = () => { 
+            let newTheme = (document.documentElement.getAttribute('data-theme') || 'light') === 'light' ? 'dark' : 'light';
+            localStorage.setItem(LSHubThemeKey, newTheme);
+            applyHubTheme(newTheme);
+        };
+        const savedHubTheme = localStorage.getItem(LSHubThemeKey) || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        applyHubTheme(savedHubTheme); 
+        hubThemeToggleBtns.forEach(btn => btn.addEventListener('click', toggleHubTheme));
+
+        const searchInput = document.getElementById('searchInput');
+        const searchResultsDropdown = document.getElementById('searchResultsDropdown');
+        const searchButton = document.getElementById('searchButton');
+
+        function displaySearchResults(term) { 
+            if (!searchResultsDropdown || !searchInput) return;
+            searchResultsDropdown.innerHTML = ''; 
+            if (!term || term.length < 2) {
+                searchResultsDropdown.classList.remove('active');
+                return;
+            }
+
+            const lowerTerm = term.toLowerCase();
+            const matchedNovels = novelsData.filter(novel => 
+                novel.title.toLowerCase().includes(lowerTerm) ||
+                novel.author.toLowerCase().includes(lowerTerm) 
+            );
+
+            if (matchedNovels.length > 0) {
+                matchedNovels.slice(0, 4).forEach(novel => { 
+                    const item = document.createElement('a');
+                    item.href = `${SITE_BASE_PATH}/${novel.presentationPage}`; 
+                    item.classList.add('search-result-item');
+                    item.innerHTML = `
+                        <span class="search-result-title">${novel.title}</span>
+                        <span class="search-result-author">${novel.author}</span>
+                    `;
+                    searchResultsDropdown.appendChild(item);
+                });
+                
+                const viewAll = document.createElement('a');
+                viewAll.href = `${SITE_BASE_PATH}/todas-las-novelas.html?search=${encodeURIComponent(term)}#todas-las-novelas-section`;
+                viewAll.className = 'search-results-view-all';
+                viewAll.textContent = matchedNovels.length > 4 ? `Ver los ${matchedNovels.length} resultados...` : 'Ver todos los resultados...';
+                searchResultsDropdown.appendChild(viewAll);
+                searchResultsDropdown.classList.add('active');
+            } else {
+                const noResultsItem = document.createElement('div');
+                noResultsItem.className = 'search-result-item no-match';
+                noResultsItem.textContent = 'No se encontraron coincidencias.';
+                searchResultsDropdown.appendChild(noResultsItem);
+                searchResultsDropdown.classList.add('active');
+            }
+        }
+
+        if (searchInput && searchResultsDropdown) {
+            searchInput.addEventListener('input', () => displaySearchResults(searchInput.value));
+            searchInput.addEventListener('focus', () => {
+                if(searchInput.value.length >= 2) displaySearchResults(searchInput.value);
+            });
+            document.addEventListener('click', (event) => {
+                const searchArea = document.querySelector('.search-area');
+                if (searchArea && !searchArea.contains(event.target)) {
+                    searchResultsDropdown.classList.remove('active');
+                }
+            });
+        }
+        
+        if (searchButton && searchInput) {
+            searchButton.addEventListener('click', () => {
+                const searchTerm = searchInput.value.trim();
+                if (!searchTerm) return;
+                window.location.href = `${SITE_BASE_PATH}/todas-las-novelas.html?search=${encodeURIComponent(searchTerm)}#todas-las-novelas-section`;
+            });
+        }
+
+        function filterNovelCardsOnPage(searchTermQuery) {
+            const searchTerm = searchTermQuery.toLowerCase();
+            const novelGrid = document.querySelector('#lista-novelas-section .novel-grid') || document.querySelector('#todas-las-novelas-section .novel-grid');
+            let noResultsMessage = document.getElementById('noResultsMessage') || document.getElementById('noResultsMessageAllNovels'); 
+            
+            if (!novelGrid) return; 
+            const novelCards = Array.from(novelGrid.querySelectorAll('.novel-card'));
+            if (novelCards.length === 0 && !searchTerm) { 
+                 if(noResultsMessage) noResultsMessage.style.display = 'none';
+                return;
+            }
+            let resultsFound = false;
+            novelCards.forEach(card => {
+                const title = card.querySelector('h3')?.textContent?.toLowerCase() || '';
+                const author = card.querySelector('.novel-author')?.textContent?.toLowerCase() || '';
+                const excerpt = card.querySelector('.novel-excerpt')?.textContent?.toLowerCase() || '';
+                if (title.includes(searchTerm) || author.includes(searchTerm) || excerpt.includes(searchTerm)) {
+                    card.classList.remove('hidden-by-search');
+                    resultsFound = true;
+                } else {
+                    card.classList.add('hidden-by-search');
+                }
+            });
+            if (!noResultsMessage && novelGrid.parentNode) { 
+                noResultsMessage = document.createElement('div');
+                noResultsMessage.className = 'no-results-message'; 
+                if (novelGrid.closest('#lista-novelas-section')) noResultsMessage.id = 'noResultsMessage';
+                else if (novelGrid.closest('#todas-las-novelas-section')) noResultsMessage.id = 'noResultsMessageAllNovels';
+                novelGrid.insertAdjacentElement('afterend', noResultsMessage);
+            }
+            if (noResultsMessage) {
+                noResultsMessage.style.display = (resultsFound || !searchTerm) ? 'none' : 'block';
+                if (!resultsFound && searchTerm) noResultsMessage.textContent = 'No se encontraron novelas que coincidan con tu búsqueda.';
+            }
+        }
+        
+        const currentPagePathForSearchCheck = window.location.pathname;
+        if (currentPagePathForSearchCheck === `${SITE_BASE_PATH}/` || currentPagePathForSearchCheck === `${SITE_BASE_PATH}/index.html` || currentPagePathForSearchCheck.endsWith('todas-las-novelas.html')) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchTermFromUrl = urlParams.get('search');
+            if (searchTermFromUrl && searchInput) { 
+                searchInput.value = decodeURIComponent(searchTermFromUrl);
+                filterNovelCardsOnPage(decodeURIComponent(searchTermFromUrl));
+                
+                const targetSectionId = currentPagePathForSearchCheck.endsWith('todas-las-novelas.html') ? 'todas-las-novelas-section' : 'lista-novelas-section';
+                const novelListSection = document.getElementById(targetSectionId);
+                if (novelListSection && urlParams.has('search')) { 
+                    setTimeout(() => novelListSection.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+                }
+            }
+        }
+        
+        const animatedElements = document.querySelectorAll('.novel-card, .page-section article, .faq-item, .novel-presentation-header > div, .chapters-list-external li'); 
+        if (animatedElements.length > 0 && "IntersectionObserver" in window) {
+            const observer = new IntersectionObserver((entries, observerInstance) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('scroll-fade-in-up');
+                        observerInstance.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.05, rootMargin: "0px 0px -30px 0px" }); 
+            animatedElements.forEach(el => {
+                el.classList.add('will-animate'); 
+                observer.observe(el);
+            });
+        } else { 
+            animatedElements.forEach(el => {
+                el.classList.remove('will-animate'); 
+                el.classList.add('scroll-fade-in-up'); 
+            });
+        }
+        console.log("SekaiHub: Funcionalidades del Hub completamente inicializadas.");
+    }
+    
+    loadLayoutAndInitialize();
+});
+
