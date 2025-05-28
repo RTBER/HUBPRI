@@ -880,7 +880,7 @@ html[data-theme="dark"] .novel-card-btn:hover { background-color: var(--clr-acce
 
 /* --- Página de Presentación de Novela --- */
 .novel-presentation-section { padding: 3rem 0; }
-.novel-presentation-content { padding: calc(var(--spacing-unit) * 2.5); box-shadow: var(--shadow-lg);  }
+.novel-presentation-content { padding: calc(var(--spacing-unit) * 1.2); box-shadow: var(--shadow-lg);  }
 .novel-presentation-header { 
     display: grid;
     grid-template-columns: 380px 1fr; 
@@ -1420,3 +1420,20 @@ html[data-theme="dark"] .volume-card:hover .volume-card-title { color: var(--the
     }
     .volume-card-title { font-size: 0.75rem; }
 }
+
+
+
+.mobile-title {
+    font-size: 1.8rem!important; /* tamaño reducido para móvil */
+    display: none;
+  }
+
+  /* Mostrar solo en móviles (menos de 768px) */
+  @media (max-width: 767px) {
+    .desktop-title {
+      display: none;
+    }
+    .mobile-title {
+      display: block;
+    }
+  }
