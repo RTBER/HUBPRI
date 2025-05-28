@@ -1077,7 +1077,7 @@ html[data-theme="dark"] .footer-nav a:hover { color: var(--theme-primary-dark); 
     .page-section > .container > h2, .page-section-standalone > .container > .page-title { font-size: 1.7rem; }
     
     .novel-presentation-cover {
-        max-width: 300px; /* Aumentado de 260px (heredado) a 280px */
+        max-width: 330px; /* Aumentado de 260px (heredado) a 280px */
         width: 100%;       /* Un porcentaje mayor para pantallas más pequeñas */
     }
     .novel-presentation-cover img {
