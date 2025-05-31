@@ -3,106 +3,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Página no Encontrada (404) - SekaiNovels</title>
-    
+
     <link rel="stylesheet" href="/HUBPRI/css/style.css"> 
-    
+
     <style>
-        /* Estructura general para que el contenido 404 ocupe espacio y se centre */
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh; /* Asegura que el body ocupe al menos toda la altura de la pantalla */
-            margin: 0; /* Resetea margen por defecto del body */
-        }
-        main {
-            flex-grow: 1; /* Hace que el 'main' ocupe el espacio disponible entre header y footer */
-            display: flex; /* Permite centrar .error-page-container si es el único hijo directo */
-            align-items: center; /* Centra verticalmente el contenido si main es flex */
-            justify-content: center; /* Centra horizontalmente */
-        }
         .error-page-container {
             display: flex;
             flex-direction: column;
-            justify-content: center; 
-            align-items: center;    
+            justify-content: center;
+            align-items: center;
             text-align: center;
-            padding: 30px 15px; /* Espaciado interno, más generoso en padding vertical */
-            box-sizing: border-box;
-            width: 100%; /* Ocupa el ancho disponible dentro de main */
-            max-width: 700px; /* Limita el ancho máximo del contenido para mejor lectura */
-            margin: 0 auto; /* Centra el contenedor si su ancho es menor al de main */
+            min-height: calc(100vh - 200px); /* Ajusta 200px según la altura aprox. de tu header+footer */
+            padding: 20px;
         }
-
         .error-page-container h1 {
-            font-size: clamp(2.5rem, 8vw, 5rem); /* Título grande y responsive */
-            /* Si usas variables CSS en tu style.css para colores, úsalas aquí también */
-            color: var(--text-color-error, #E53935); /* Color de error, con un fallback rojo oscuro */
-            margin-top: 0; 
+            color: var(--text-color-error, #ffdd44); /* Color de error, con un fallback rojo oscuro */
+            font-size: 3rem; /* O el tamaño que prefieras */
             margin-bottom: 1rem;
-            font-weight: bold; /* O el peso que uses para títulos */
         }
-
         .error-page-container p {
-            font-size: clamp(1rem, 4vw, 1.3rem); /* Párrafo responsive */
-            color: var(--text-color-secondary, #424242); /* Color secundario, con fallback gris oscuro */
-            margin-bottom: 1.8rem;
-            line-height: 1.7;
+            font-size: 1.2rem; /* O el tamaño que prefieras */
+            margin-bottom: 1.5rem;
         }
-
-        /* Estilo para el botón/enlace de retorno */
-        .error-page-container .button-link-404 { 
+        /* Asumiendo que tienes una clase .button-link o similar para tus botones/enlaces estilizados */
+        .error-page-container .button-link { 
             display: inline-block;
-            padding: 12px 28px;
-            font-size: clamp(0.95rem, 3vw, 1.15rem);
-            background-color: var(--primary-accent-color, #1976D2); /* Color primario, con fallback azul */
-            color: var(--button-text-color, white); 
+            padding: 10px 20px;
+            /* background-color: var(--primary-color);  Ejemplo si usas variables CSS para el tema */
+            background-color: #ffdd44; /* Color de ejemplo, cámbialo */
+            color: white;
             text-decoration: none;
-            border-radius: 6px; 
-            font-weight: 500; /* O el peso que uses para botones */
-            transition: background-color 0.25s ease, transform 0.2s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .error-page-container .button-link-404:hover,
-        .error-page-container .button-link-404:focus {
-            background-color: var(--primary-accent-hover-color, #1565C0); /* Color hover, con fallback azul más oscuro */
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-            outline: none;
-        }
-
-        /* Ajustes para pantallas más pequeñas */
-        @media (max-width: 600px) {
-            .error-page-container h1 {
-                font-size: clamp(2rem, 10vw, 3rem);
-            }
-            .error-page-container p {
-                font-size: clamp(0.9rem, 4vw, 1.1rem);
-                margin-bottom: 1.5rem;
-            }
-            .error-page-container .button-link-404 {
-                padding: 10px 20px;
-                font-size: clamp(0.9rem, 3.5vw, 1rem);
-            }
+            border-radius: 5px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
     <div id="header-placeholder">
-        <div style="text-align:center; padding:15px; background-color: #f0f0f0;">Cargando encabezado...</div>
+        <div style="text-align:center; padding:20px;">Cargando encabezado...</div>
     </div>
 
     <main>
         <div class="error-page-container">
             <h1>Oops! (404)</h1>
-            <p>La página que estás buscando no existe o ha sido movida de lugar.</p>
-            <p>No te preocupes, puedes volver al inicio e intentarlo de nuevo.</p>
-            <a href="/HUBPRI/index.html" class="button-link-404">Volver al Inicio</a>
+            <p>La página que estás buscando no existe o ha sido movida.</p>
+            <p>Puedes intentar volver a la página de inicio.</p>
+            <a href="/HUBPRI/index.html" class="button-link">Volver al Inicio</a>
         </div>
     </main>
 
     <div id="footer-placeholder">
-        <div style="text-align:center; padding:15px; background-color: #f0f0f0;">Cargando pie de página...</div>
+        <div style="text-align:center; padding:20px;">Cargando pie de página...</div>
     </div>
 
     <script src="/HUBPRI/js/hub-global.js" defer></script>
