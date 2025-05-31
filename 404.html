@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light"> <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página no Encontrada (404) - SekaiNovels</title>
+
+    <link rel="stylesheet" href="/HUBPRI/css/style.css"> 
+
+    <style>
+        .error-page-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            min-height: calc(100vh - 200px); /* Ajusta 200px según la altura aprox. de tu header+footer */
+            padding: 20px;
+        }
+        .error-page-container h1 {
+            font-size: 3rem; /* O el tamaño que prefieras */
+            margin-bottom: 1rem;
+        }
+        .error-page-container p {
+            font-size: 1.2rem; /* O el tamaño que prefieras */
+            margin-bottom: 1.5rem;
+        }
+        /* Asumiendo que tienes una clase .button-link o similar para tus botones/enlaces estilizados */
+        .error-page-container .button-link { 
+            display: inline-block;
+            padding: 10px 20px;
+            /* background-color: var(--primary-color);  Ejemplo si usas variables CSS para el tema */
+            background-color: #007bff; /* Color de ejemplo, cámbialo */
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder">
+        <div style="text-align:center; padding:20px;">Cargando encabezado...</div>
+    </div>
+
+    <main>
+        <div class="error-page-container">
+            <h1>Oops! (404)</h1>
+            <p>La página que estás buscando no existe o ha sido movida.</p>
+            <p>Puedes intentar volver a la página de inicio.</p>
+            <a href="/HUBPRI/index.html" class="button-link">Volver al Inicio</a>
+        </div>
+    </main>
+
+    <div id="footer-placeholder">
+        <div style="text-align:center; padding:20px;">Cargando pie de página...</div>
+    </div>
+
+    <script src="/HUBPRI/js/hub-global.js" defer></script>
+</body>
+</html>
