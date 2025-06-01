@@ -1100,6 +1100,10 @@ html[data-theme="dark"] .footer-nav a:hover { color: var(--theme-primary-dark); 
     }
     #mainFooter { padding: 2rem 0; }
     .footer-links a { margin: 0 0.5rem; }
+
+    .novel-list-section > .container > h2{
+    font-size: 1.7rem;
+    }
 }
 
 
