@@ -19,6 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
             title: "Kage no Jitsuryokusha ni Naritakute!", 
             author: "Aizawa Daisuke",
             presentationPage: "novelas/Kage no Jitsuryokusha ni Naritakute!.html", // Ruta desde la raíz del hub
+        },
+        { 
+            title: "Classroom of The Elite", 
+            author: "Kinugasa Shougo",
+            presentationPage: "novelas/Classroom of The Elite.html", // Ruta desde la raíz del hub
         }
     ];
 
